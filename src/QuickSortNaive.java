@@ -1,38 +1,129 @@
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.util.Arrays;
 
 
 public class QuickSortNaive {
 
-    static int MAXSIZE = 100;
-    static int MINSIZE = 10;
+    static ThreadMXBean bean = ManagementFactory.getThreadMXBean( );
+
+    static int MAXINPUTSIZE  = 5000000;
+
+    static int MININPUTSIZE  =  10;
+
     static int MAXVALUE = 2000;
     static int MINVALUE = -2000;
     static int numberOfTrials = 10;
-    static int SIZEINC = 1000;
+
+    static String ResultsFolderPath = "/home/marie/Results/"; // pathname to results folder
+
+    static FileWriter resultsFile;
+
+    static PrintWriter resultsWriter;
 
     public static void main(String[] args) {
         checkSortCorrectness();
 
-        for (int inputSize = MINSIZE; inputSize <= MAXSIZE; inputSize = inputSize + SIZEINC) {
+        runFullExperiment("QuickSortNaive-Exp1-ThrowAway.txt");
 
+        runFullExperiment("QuickSortNaive-Exp2.txt");
 
-            for (int trial = 0; trial < numberOfTrials; trial++) {
-                /* For one trial: */
-                /* generate (random?) input data of desired size (a list of N random numbers) */
-                int[] testingList = createRandomIntegerList(inputSize);
+        runFullExperiment("QuickSortNaive-Exp3.txt");
 
+    }
 
-                /* apply test function to the test input */
+    static void runFullExperiment(String resultsFileName){
 
-                quickSort(testingList);
+        try {
 
+            resultsFile = new FileWriter(ResultsFolderPath + resultsFileName);
 
+            resultsWriter = new PrintWriter(resultsFile);
 
-            }
+        } catch(Exception e) {
+
+            System.out.println("*****!!!!!  Had a problem opening the results file "+ResultsFolderPath+resultsFileName);
+
+            return; // not very foolproof... but we do expect to be able to create/open the file...
 
         }
 
 
+
+        ThreadCpuStopWatch BatchStopwatch = new ThreadCpuStopWatch(); // for timing an entire set of trials
+
+        ThreadCpuStopWatch TrialStopwatch = new ThreadCpuStopWatch(); // for timing an individual trial
+
+
+
+        resultsWriter.println("#InputSize    AverageTime"); // # marks a comment in gnuplot data
+
+        resultsWriter.flush();
+
+        for(int inputSize=MININPUTSIZE;inputSize<=MAXINPUTSIZE; inputSize*=2) {
+
+            // progress message...
+
+            System.out.println("Running test for input size "+inputSize+" ... ");
+
+
+
+            /* repeat for desired number of trials (for a specific size of input)... */
+
+            long batchElapsedTime = 0;
+
+            // generate a list of randomly spaced integers in ascending sorted order to use as test input
+
+            // In this case we're generating one list to use for the entire set of trials (of a given input size)
+
+            // but we will randomly generate the search key for each trial
+
+
+
+
+
+
+            // instead of timing each individual trial, we will time the entire set of trials (for a given input size)
+
+            // and divide by the number of trials -- this reduces the impact of the amount of time it takes to call the
+
+            // stopwatch methods themselves
+
+            //BatchStopwatch.start(); // comment this line if timing trials individually
+
+
+
+            // run the tirals
+
+            for (long trial = 0; trial < numberOfTrials; trial++) {
+
+                int[] testingList = createRandomIntegerList(inputSize);
+
+                TrialStopwatch.start(); // *** uncomment this line if timing trials individually
+
+                quickSort(testingList);
+
+                batchElapsedTime = batchElapsedTime + TrialStopwatch.elapsedTime(); // *** uncomment this line if timing trials individually
+
+            }
+
+            //batchElapsedTime = BatchStopwatch.elapsedTime(); // *** comment this line if timing trials individually
+
+            double averageTimePerTrialInBatch = (double) batchElapsedTime / (double)numberOfTrials; // calculate the average time per trial in this batch
+
+
+
+            /* print data for this size of input */
+
+            resultsWriter.printf("%12d  %15.2f \n",inputSize, averageTimePerTrialInBatch); // might as well make the columns look nice
+
+            resultsWriter.flush();
+
+            System.out.println(" ....done.");
+
+        }
 
     }
 

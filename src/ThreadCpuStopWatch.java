@@ -4,7 +4,7 @@ import java.lang.management.ThreadMXBean;
 
 
 
-public class ThreadCpuStopwatch {
+public class ThreadCpuStopWatch {
 
 
 
@@ -14,7 +14,7 @@ public class ThreadCpuStopwatch {
 
 
 
-    public ThreadCpuStopwatch(){
+    public ThreadCpuStopWatch(){
 
         magicBean = ManagementFactory.getThreadMXBean();
 
