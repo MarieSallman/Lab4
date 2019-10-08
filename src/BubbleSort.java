@@ -28,8 +28,6 @@ public class BubbleSort {
 
                 bubbleSortNumberList(testingList);
 
-
-
             }
 
         }
