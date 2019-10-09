@@ -8,7 +8,7 @@ public class BubbleSort {
 
     static ThreadMXBean bean = ManagementFactory.getThreadMXBean( );
 
-    static int MAXINPUTSIZE  = 5242880;
+    static int MAXINPUTSIZE  = 81920;
 
     static int MININPUTSIZE  =  10;
     static long MAXVALUE = 2000;

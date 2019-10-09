@@ -8,7 +8,7 @@ public class InsertionSort {
 
     static ThreadMXBean bean = ManagementFactory.getThreadMXBean( );
 
-    static int MAXINPUTSIZE  = 2000000;
+    static int MAXINPUTSIZE  = 327680;
 
     static int MININPUTSIZE  =  10;
         static int MAXVALUE = 2000;
